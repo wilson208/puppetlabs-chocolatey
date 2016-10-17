@@ -41,6 +41,7 @@ end
 
 platform = ENV["PLATFORM"]
 bhg_mapped_name = ''
+template = ''
 
 # Create the directory, if it exists already you'll get an error, but this should not stop the execution
 begin
@@ -54,13 +55,15 @@ task :reference_tests do
   case
     when platform == 'windows-2008r2-64a'
       bhg_mapped_name = 'windows2008r2-64'
+      template = 'win-2008r2-wmf5-x86_64'
     when platform == 'windows-2012r2-64a'
       bhg_mapped_name = 'windows2012r2-64'
+      template = 'win-2012r2-wmf5-x86_64'
     else
       abort("#{platform} is not a supported platform for reference test execution.")
   end
 
-  command = "bundle exec beaker-hostgenerator --global-config {masterless=true} #{bhg_mapped_name} > tests/configs/#{platform}" # should we assume the "configs" directory is present?
+  command = "bundle exec beaker-hostgenerator --global-config {masterless=true} #{bhg_mapped_name}{template=#{template}} > tests/configs/#{platform}" # should we assume the "configs" directory is present?
   sh command
 
   command =<<-EOS
@@ -82,13 +85,15 @@ task :acceptance_tests do
   case
     when platform == 'windows-2008r2-64mda'
       bhg_mapped_name = 'windows2008r2-64'
+      template = 'win-2008r2-wmf5-x86_64'
     when platform == 'windows-2012r2-64mda'
       bhg_mapped_name = 'windows2012r2-64'
+      template = 'win-2012r2-wmf5-x86_64'
     else
       abort("#{platform} is not a supported platform for acceptance test execution.")
   end
 
-  command = "bundle exec beaker-hostgenerator centos7-64mdca-#{bhg_mapped_name} > tests/configs/#{platform}"
+  command = "bundle exec beaker-hostgenerator centos7-64mdca-#{bhg_mapped_name}{#{template}} > tests/configs/#{platform}"
   sh command
 
   command =<<-EOS
